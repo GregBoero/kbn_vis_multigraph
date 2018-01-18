@@ -1,14 +1,14 @@
 import uiModules from 'ui/modules';
 import AggResponseTabifyTabifyProvider from 'ui/agg_response/tabify/tabify';
 import $ from 'jquery';
+import c3 from 'c3';
 
 // get the kibana/table_vis module, and make sure that it requires the 'kibana' module if it didn't already
-const module = uiModules.get('kibana/c3_vis', ['kibana']);
+const module = uiModules.get('kibana/kbn_vis_multiple_graph', ['kibana']);
 
 // Require C3.js
-const c3 = require('c3');
 
-module.controller('kbnVisMultigraph', function ($scope, $element,$rootScope, Private) {
+module.controller('kbnVisMultigraphController', function ($scope, $element, $rootScope, Private) {
 
   let hold = '';
   let wold = '';
@@ -91,16 +91,16 @@ module.controller('kbnVisMultigraph', function ($scope, $element,$rootScope, Pri
     if (chartCount.bar) {
 
       myRatio = 5 / timeseries.length;
-      myRatio = (myRatio > 0.35) ? myRatio = 0.3 : myRatio;
+      myRatio = (myRatio > 0.35) ? 0.3 : myRatio;
 
       if (chartCount.bar > 1) {
 
-        myRatio = (myRatio < 0.02) ? myRatio = 0.02 : myRatio;
+        myRatio = (myRatio < 0.02) ?  0.02 : myRatio;
         $rootScope.activate_grouped = true;
 
       } else {
 
-        myRatio = (myRatio < 0.01) ? myRatio = 0.01 : myRatio;
+        myRatio = (myRatio < 0.01) ?  0.01 : myRatio;
         $rootScope.activate_grouped = false;
       }
 
@@ -117,13 +117,9 @@ module.controller('kbnVisMultigraph', function ($scope, $element,$rootScope, Pri
     } else if (parsedData.length === 3) {
       totalData = { 'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2]] };
     } else if (parsedData.length === 4) {
-      totalData = {
-        'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]
-      };
+      totalData = {  'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]] };
     } else {
-      totalData = {
-        'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
-      };
+      totalData = { 'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]] };
     }
 
     // largest number possible in JavaScript.
@@ -163,8 +159,7 @@ module.controller('kbnVisMultigraph', function ($scope, $element,$rootScope, Pri
         timeFormat = '%H:%M';
       }
 
-      let boolFit = false;
-      boolFit = (timeseries.length < 4) ? boolFit = true : boolFit = false;
+      const boolFit = (timeseries.length < 4);
 
       config.axis = {
         'x': {
