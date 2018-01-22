@@ -1,32 +1,41 @@
-
-import './less/kbn_vis_multiple_graph.less';
-import './kbn_vis_multiple_graph_controller';
-
-
-import optionsTemplate from './kbn_vis_multiple_graph_params.html';
-import VisTemplate from './kbn_vis_multiple_graph.html';
-
-import { CATEGORY } from 'ui/vis/vis_category';
+import 'plugins/kbn_vis_multiple_graph/kbn_vis_multiple_graph.less';
+import 'plugins/kbn_vis_multiple_graph/kbn_vis_multiple_graph_controller';
+import 'plugins/kbn_vis_multiple_graph/kbn_vis_multiple_graph_params';
+import 'ui/agg_table';
+import 'ui/agg_table/agg_table_group';
 import { VisFactoryProvider } from 'ui/vis/vis_factory';
-import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import { CATEGORY } from 'ui/vis/vis_category';
 import { VisSchemasProvider } from 'ui/vis/editors/default/schemas';
+import tableVisTemplate from 'plugins/kbn_vis_multiple_graph/kbn_vis_multiple_graph.html';
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import image from './images/icon-table.svg';
+// we need to load the css ourselves
 
-// Require the JavaScript CSS file
-require('../node_modules/c3/c3.css');
+// we also need to load the controller and used by the template
 
+// our params are a bit complex so we will manage them with a directive
+
+// require the directives that we use as well
 
 // register the provider with the visTypes registry
-VisTypesRegistryProvider.register(KbnVisProvider);
+VisTypesRegistryProvider.register(TableVisTypeProvider);
 
-function KbnVisProvider(Private) {
+// define the TableVisType
+function TableVisTypeProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
   const Schemas = Private(VisSchemasProvider);
 
+  // define the TableVisController which is used in the template
+  // by angular's ng-controller directive
+
+  // return the visType object, which kibana will use to display and configure new
+  // Vis object of this type.
   return VisFactory.createAngularVisualization({
-    name: 'multi graph ',
-    title: 'multi graph charts widget',
-    icon: 'fa-spinner',
-    description: 'This is Kibana 6 >  plugin which uses the JavaScript library C3.js for data representations.',
+    type: 'table',
+    name: 'kbn_vis_multiple_graph',
+    title: 'Multiple graph',
+    image,
+    description: 'Display values in a table',
     category: CATEGORY.OTHER,
     visConfig: {
       defaults: {
@@ -49,10 +58,10 @@ function KbnVisProvider(Private) {
         time_format: '%d-%m-%Y',
         grouped: false
       },
-      template: VisTemplate,
+      template: tableVisTemplate,
     },
     editorConfig: {
-      optionsTemplate: optionsTemplate,
+      optionsTemplate: '<kbn-vis-multiple-graph-params></kbn-vis-multiple-graph-params>',
       schemas: new Schemas([
         {
           group: 'metrics',
@@ -60,22 +69,24 @@ function KbnVisProvider(Private) {
           title: 'Y-axis metric',
           min: 1,
           max: 5,
-          defaults: [ { type: 'count', schema: 'metric' } ],
+          defaults: [
+            { type: 'count', schema: 'metric' }
+          ]
         },
         {
           group: 'buckets',
-          name: 'buckets',
+          name: 'bucket',
           title: 'X-Axis',
           min: 1,
           max: 1,
           aggFilter: ['!geohash_grid']
         }
       ])
+    },
+    responseHandlerConfig: {
+      asAggConfigResults: true
     }
-
   });
 }
 
-// export the provider so that the visType can be required with Private()
-export default KbnVisProvider;
-
+export default TableVisTypeProvider;

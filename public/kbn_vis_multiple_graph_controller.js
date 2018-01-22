@@ -1,14 +1,16 @@
-import uiModules from 'ui/modules';
-import AggResponseTabifyTabifyProvider from 'ui/agg_response/tabify/tabify';
+import {uiModules} from 'ui/modules';
+import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
+import _ from 'lodash';
 import $ from 'jquery';
 import c3 from 'c3';
 
-// get the kibana/table_vis module, and make sure that it requires the 'kibana' module if it didn't already
+// get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
+// didn't already
 const module = uiModules.get('kibana/kbn_vis_multiple_graph', ['kibana']);
 
-// Require C3.js
-
-module.controller('kbnVisMultigraphController', function ($scope, $element, $rootScope, Private) {
+// add a controller to tha module, which will transform the esResponse into a
+// tabular format that we can pass to the table directive
+module.controller('kbnVisMultipleGraphController', function ($scope, $element , $rootScope, Private) {
 
   let hold = '';
   let wold = '';
@@ -16,7 +18,7 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
   $rootScope.editorParams = {};
   $rootScope.activate_grouped = false;
 
-  const tabifyAggResponse = Private(AggResponseTabifyTabifyProvider);
+  const tabifyAggResponse = Private(AggResponseTabifyProvider);
 
   const xAxisValues = [];
   let timeseries = [];
@@ -95,12 +97,12 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
 
       if (chartCount.bar > 1) {
 
-        myRatio = (myRatio < 0.02) ?  0.02 : myRatio;
+        myRatio = (myRatio < 0.02) ? 0.02 : myRatio;
         $rootScope.activate_grouped = true;
 
       } else {
 
-        myRatio = (myRatio < 0.01) ?  0.01 : myRatio;
+        myRatio = (myRatio < 0.01) ? 0.01 : myRatio;
         $rootScope.activate_grouped = false;
       }
 
@@ -111,15 +113,18 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
     let totalData;
     // define the data to representate
     if (parsedData.length === 1) {
-      totalData = { 'x': 'x1', 'columns': [timeseries, parsedData[0]] };
+      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0]]};
     } else if (parsedData.length === 2) {
-      totalData = { 'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1]] };
+      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1]]};
     } else if (parsedData.length === 3) {
-      totalData = { 'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2]] };
+      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2]]};
     } else if (parsedData.length === 4) {
-      totalData = {  'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]] };
+      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]};
     } else {
-      totalData = { 'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]] };
+      totalData = {
+        'x': 'x1',
+        'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
+      };
     }
 
     // largest number possible in JavaScript.
@@ -142,12 +147,12 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
     config.data.types = dataTypes;
     config.data.colors = dataColors;
     config.data.labels = $scope.vis.params.dataLabels;
-    config.legend = { 'position': $scope.vis.params.legend_position };
+    config.legend = {'position': $scope.vis.params.legend_position};
 
     // timeseries config
     if (bucketType === 'date_histogram' || bucketType === 'date_range') {
 
-      config.bar = { 'width': { 'ratio': myRatio } };
+      config.bar = {'width': {'ratio': myRatio}};
 
       const lastTimestapm = timeseries[timeseries.length - 1];
       const firstTimestamp = timeseries[1];
@@ -163,10 +168,10 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
 
       config.axis = {
         'x': {
-          'label': { 'text': xLabel, 'position': 'outer-center' },
+          'label': {'text': xLabel, 'position': 'outer-center'},
           'type': 'timeseries',
-          'tick': { 'fit': boolFit, 'multiline': false, 'format': timeFormat }
-        }, 'y': { 'min': globalMin, 'padding': { 'top': 30, 'bottom': 0 } }
+          'tick': {'fit': boolFit, 'multiline': false, 'format': timeFormat}
+        }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 0}}
       };
       config.tooltip = {
         'format': {
@@ -177,7 +182,7 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
       };
 
       if ($scope.vis.params.legend_position === 'bottom') {
-        config.padding = { 'right': 20 };
+        config.padding = {'right': 20};
       }
 
       // category data config
@@ -185,19 +190,19 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
 
       config.axis = {
         'x': {
-          'label': { 'text': xLabel, 'position': 'outer-center' },
+          'label': {'text': xLabel, 'position': 'outer-center'},
           'type': 'category',
-          'tick': { 'multiline': false }
-        }, 'y': { 'min': globalMin, 'padding': { 'top': 30, 'bottom': 1 } }
+          'tick': {'multiline': false}
+        }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 1}}
       };
 
       if (timeseries.length - 1 > 13 && $scope.vis.params.fewXAxis) {
         config.axis = {
           'x': {
-            'label': { 'text': xLabel, 'position': 'outer-center' },
+            'label': {'text': xLabel, 'position': 'outer-center'},
             'type': 'category',
-            'tick': { 'fit': false, 'multiline': false, 'culling': { 'max': 10 } }
-          }, 'y': { 'min': globalMin, 'padding': { 'top': 30, 'bottom': 1 } }
+            'tick': {'fit': false, 'multiline': false, 'culling': {'max': 10}}
+          }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 1}}
         };
       }
     }
@@ -224,12 +229,12 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
     }
 
     if ($scope.vis.params.gridlines) {
-      config.grid = { 'x': { 'show': true }, 'y': { 'show': true } };
+      config.grid = {'x': {'show': true}, 'y': {'show': true}};
     }
 
     // zoom and hide points features
-    config.point = { 'show': !$scope.vis.params.hidePoints };
-    config.zoom = { 'enabled': $scope.vis.params.enableZoom };
+    config.point = {'show': !$scope.vis.params.hidePoints};
+    config.zoom = {'enabled': $scope.vis.params.enableZoom};
 
     // Generate and draw
     $scope.chart = c3.generate(config);
@@ -238,7 +243,7 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
     const elem = $(idchart[0]).closest('div.visualize-chart');
     const h = elem.height();
     const w = elem.width();
-    $scope.chart.resize({ height: h - 50, width: w - 50 });
+    $scope.chart.resize({height: h - 50, width: w - 50});
 
   };
 
@@ -251,7 +256,7 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
         const tmp = [];
 
         for (const val in data) {
-          if(val && data.hasOwnProperty(val)) {
+          if (val && data.hasOwnProperty(val)) {
             tmp.push(data[val][i]);
           }
         }
@@ -271,7 +276,6 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
 
   $scope.$watch('esResponse', function (resp) {
     if (resp) {
-
       if (!$scope.vis.aggs.bySchemaName.buckets) {
         $scope.waiting = message;
         return;
@@ -304,7 +308,7 @@ module.controller('kbnVisMultigraphController', function ($scope, $element, $roo
       if (idchart.length > 0 && h > 0 && w > 0) {
 
         if (hold !== h || wold !== w) {
-          $scope.chart.resize({ height: h - 50, width: w - 50 });
+          $scope.chart.resize({height: h - 50, width: w - 50});
           hold = elem.height();
           wold = elem.width();
         }
