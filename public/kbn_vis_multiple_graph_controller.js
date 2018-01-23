@@ -1,5 +1,5 @@
 import {uiModules} from 'ui/modules';
-import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
+import {AggResponseTabifyProvider} from 'ui/agg_response/tabify/tabify';
 import _ from 'lodash';
 import $ from 'jquery';
 import c3 from 'c3';
@@ -10,7 +10,7 @@ const module = uiModules.get('kibana/kbn_vis_multiple_graph', ['kibana']);
 
 // add a controller to tha module, which will transform the esResponse into a
 // tabular format that we can pass to the table directive
-module.controller('kbnVisMultipleGraphController', function ($scope, $element , $rootScope, Private) {
+module.controller('kbnVisMultipleGraphController', function ($scope, $element, $rootScope, Private) {
 
   let hold = '';
   let wold = '';
@@ -29,13 +29,13 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element , 
 
   // Identify the div element in the HTML
   const idchart = $element.children().find('.chartc3');
-  const message = 'This chart require more than one data point. Try adding an X-Axis Aggregation.';
+  let message = 'This chart require more than one data point. Try adding an X-Axis Aggregation.';
 
 
   // Be alert to changes in vis_params
   $scope.$watch('vis.params', function (params) {
     if (params) {
-      console.log(params);
+      console.log("param => ", params);
     }
     if (!$rootScope.show_chart) return;
     //if (Object.keys(params.editorPanel).length == 0 && params.enableZoom == previo_zoom) return;
@@ -54,38 +54,36 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element , 
     const theLabels = Object.keys(chartLabels);
     const dataColors = {};
     const dataTypes = {};
-    let i = 0;
-    theLabels.map(function (chart) {
-      if (i === 0) {
-        dataColors[chart] = $scope.vis.params.color1;
-        dataTypes[chart] = $scope.vis.params.type1;
-
-      } else if (i === 1) {
-
-        dataColors[chart] = $scope.vis.params.color2;
-        dataTypes[chart] = $scope.vis.params.type2;
-
-      } else if (i === 2) {
-        dataColors[chart] = $scope.vis.params.color3;
-        dataTypes[chart] = $scope.vis.params.type3;
-
-      } else if (i === 3) {
-        dataColors[chart] = $scope.vis.params.color4;
-        dataTypes[chart] = $scope.vis.params.type4;
-
-      } else if (i === 4) {
-        dataColors[chart] = $scope.vis.params.color5;
-        dataTypes[chart] = $scope.vis.params.type5;
+    _.each(theLabels, (chart, index) => {
+      switch (index) {
+        case 0:
+          dataColors[chart] = $scope.vis.params.color1;
+          dataTypes[chart] = $scope.vis.params.type1;
+          break;
+        case 1:
+          dataColors[chart] = $scope.vis.params.color2;
+          dataTypes[chart] = $scope.vis.params.type2;
+          break;
+        case 2:
+          dataColors[chart] = $scope.vis.params.color3;
+          dataTypes[chart] = $scope.vis.params.type3;
+          break;
+        case 3:
+          dataColors[chart] = $scope.vis.params.color4;
+          dataTypes[chart] = $scope.vis.params.type4;
+          break;
+        case 4:
+          dataColors[chart] = $scope.vis.params.color5;
+          dataTypes[chart] = $scope.vis.params.type5;
+          break;
       }
-
-      i++;
-
     });
 
     // count bar charts and change bar ratio
     const theTypes = Object.values(dataTypes);
     const chartCount = {};
-    theTypes.forEach(function (i) {
+
+    _.each(theTypes, (i) => {
       chartCount[i] = (chartCount[i] || 0) + 1;
     });
 
@@ -107,24 +105,34 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element , 
       }
 
     }
+    console.log("$scope vis aggs bucket  name ->", $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
 
-    const bucketType = $scope.vis.aggs.bySchemaName.buckets[0].type.name;
+    const bucketType = $scope.vis.aggs.bySchemaName['bucket'][0].type.name;
 
     let totalData;
     // define the data to representate
-    if (parsedData.length === 1) {
-      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0]]};
-    } else if (parsedData.length === 2) {
-      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1]]};
-    } else if (parsedData.length === 3) {
-      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2]]};
-    } else if (parsedData.length === 4) {
-      totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]};
-    } else {
-      totalData = {
-        'x': 'x1',
-        'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
-      };
+    switch (parsedData.length) {
+      case 0:
+        message = "Something went wrong during data representation";
+        break;
+      case 1:
+        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0]]};
+        break;
+      case 2:
+        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1]]};
+        break;
+      case 3:
+        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2]]};
+        break;
+      case 4:
+        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]};
+        break;
+      default:
+        totalData = {
+          'x': 'x1',
+          'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
+        };
+        break;
     }
 
     // largest number possible in JavaScript.
@@ -132,11 +140,12 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element , 
 
     // Search the min value of the data
     const parsedDataCopy = JSON.parse(JSON.stringify(parsedData));
-    parsedDataCopy.map(function (eachArray) {
+    _.each(parsedDataCopy, (eachArray) => {
       eachArray.splice(0, 1);
       const eachArrayMin = Math.min(...eachArray);
       globalMin = (eachArrayMin < globalMin) ? eachArrayMin : globalMin;
     });
+
 
     globalMin = (globalMin >= 0) ? 0 : globalMin;
 
@@ -214,17 +223,11 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element , 
       const losKeys = Object.keys(dataTypes);
       const losValues = Object.values(dataTypes);
       const groupCharts = [];
-      let i = 0;
-      losValues.map(function (chartType) {
-
+      _.each(losValues, (chartType, index) => {
         if (chartType === 'bar') {
-          groupCharts.push(losKeys[i]);
+          groupCharts.push(losKeys[index]);
         }
-
-        i++;
-
       });
-
       config.data.groups = [groupCharts];
     }
 
@@ -244,39 +247,40 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element , 
     const h = elem.height();
     const w = elem.width();
     $scope.chart.resize({height: h - 50, width: w - 50});
-
   };
 
-
   // Get data from ES
-  $scope.processTableGroups = function (tableGroups) {
-    tableGroups.tables.forEach(function (table) {
-      table.columns.forEach(function (column, i) {
-        const data = table.rows;
-        const tmp = [];
-
-        for (const val in data) {
-          if (val && data.hasOwnProperty(val)) {
-            tmp.push(data[val][i]);
+  $scope.processTableGroups = (tableGroups) => {
+    if (tableGroups && tableGroups.tables) {
+      _.each(tableGroups.tables, (table) => {
+        _.each(table.columns, (column, index) => {
+          const data = table.rows;
+          const tmp = [];
+          _.each(data, (val) => {
+            if (val) {
+              tmp.push(val[index]);
+            }
+          });
+          if (index > 0) {
+            $rootScope.label_keys.push(column.title);
+            chartLabels[column.title] = column.title;
+            tmp.splice(0, 0, column.title);
+            parsedData.push(tmp);
+          } else {
+            xLabel = column.title;
+            xAxisValues.push(tmp);
           }
-        }
-        if (i > 0) {
-          $rootScope.label_keys.push(column.title);
-          chartLabels[column.title] = column.title;
-          tmp.splice(0, 0, column.title);
-          parsedData.push(tmp);
-        } else {
-          xLabel = column.title;
-          xAxisValues.push(tmp);
-        }
+        });
       });
-    });
+    }
     $rootScope.editorParams.label = chartLabels;
   };
 
+
   $scope.$watch('esResponse', function (resp) {
     if (resp) {
-      if (!$scope.vis.aggs.bySchemaName.buckets) {
+      console.log("$scope vis aggs bucket  ->", $scope.vis.aggs.bySchemaName['bucket']);
+      if (!$scope.vis.aggs.bySchemaName['bucket']) {
         $scope.waiting = message;
         return;
       }
@@ -314,6 +318,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element , 
         }
 
       }
+      $element.trigger('renderComplete');
     },
     true
   );
