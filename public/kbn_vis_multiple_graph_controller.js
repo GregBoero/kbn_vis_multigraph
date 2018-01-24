@@ -41,7 +41,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
   // C3JS chart generator
   $scope.chart = null;
-  $scope.chartGen = function () {
+  $scope.chartGen = () => {
 
     // change bool value
     $rootScope.show_chart = true;
@@ -50,31 +50,30 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     const theLabels = Object.keys(chartLabels);
     const dataColors = {};
     const dataTypes = {};
+    const labelActionMap = {
+      0: () => {
+        dataColors[chart] = $scope.vis.params.color1;
+        dataTypes[chart] = $scope.vis.params.type1;
+      },
+      1: () => {
+        dataColors[chart] = $scope.vis.params.color1;
+        dataTypes[chart] = $scope.vis.params.type1;
+      },
+      2: () => {
+        dataColors[chart] = $scope.vis.params.color1;
+        dataTypes[chart] = $scope.vis.params.type1;
+      },
+      4: () => {
+        dataColors[chart] = $scope.vis.params.color1;
+        dataTypes[chart] = $scope.vis.params.type1;
+      }
+    };
     _.each(theLabels, (chart, index) => {
-      switch (index) {
-        case 0:
-          dataColors[chart] = $scope.vis.params.color1;
-          dataTypes[chart] = $scope.vis.params.type1;
-          break;
-        case 1:
-          dataColors[chart] = $scope.vis.params.color2;
-          dataTypes[chart] = $scope.vis.params.type2;
-          break;
-        case 2:
-          dataColors[chart] = $scope.vis.params.color3;
-          dataTypes[chart] = $scope.vis.params.type3;
-          break;
-        case 3:
-          dataColors[chart] = $scope.vis.params.color4;
-          dataTypes[chart] = $scope.vis.params.type4;
-          break;
-        case 4:
-          dataColors[chart] = $scope.vis.params.color5;
-          dataTypes[chart] = $scope.vis.params.type5;
-          break;
+      if(index >= 0 && index <= 4){
+        labelActionMap[index]();
       }
     });
-    console.log("dataTypes => ",dataTypes);
+    console.log("dataTypes => ", dataTypes);
     // count bar charts and change bar ratio
     const theTypes = Object.values(dataTypes);
     const chartCount = {};
@@ -82,7 +81,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     _.each(theTypes, (i) => {
       chartCount[i] = (chartCount[i] || 0) + 1;
     });
-    console.log("chartCount => ",chartCount);
+    console.log("chartCount => ", chartCount);
     let myRatio;
     if (chartCount.bar) {
 
@@ -105,6 +104,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
     let totalData;
     // define the data to representate
+
     switch (parsedData.length) {
       case 0:
         message = "Something went wrong during data representation";
@@ -129,7 +129,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
         break;
     }
 
-    console.log("totalData => ",totalData);
+    console.log("totalData => ", totalData);
     // largest number possible in JavaScript.
     let globalMin = Number.MAX_VALUE;
 
@@ -141,7 +141,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       globalMin = (eachArrayMin < globalMin) ? eachArrayMin : globalMin;
     });
 
-    console.log("parsedDataCopy => ",parsedDataCopy);
+    console.log("parsedDataCopy => ", parsedDataCopy);
 
     globalMin = (globalMin >= 0) ? 0 : globalMin;
 
@@ -155,7 +155,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     config.legend = {'position': $scope.vis.params.legend_position};
 
     console.log("$scope vis aggs bucket  name ->", $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
-    const bucketType = ( $scope.vis.aggs.bySchemaName['bucket'] && $scope.vis.aggs.bySchemaName['bucket'][0] && $scope.vis.aggs.bySchemaName['bucket'][0].type ? null : $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
+    const bucketType = ($scope.vis.aggs.bySchemaName['bucket'] && $scope.vis.aggs.bySchemaName['bucket'][0] && $scope.vis.aggs.bySchemaName['bucket'][0].type ? null : $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
 
     // timeseries config
     if (bucketType && (bucketType === 'date_histogram' || bucketType === 'date_range')) {
@@ -290,6 +290,11 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       chartLabels = {};
       $rootScope.label_keys = [];
       $scope.processTableGroups(resp);
+
+      if (!xAxisValues) {
+        $scope.waiting = "No data to display increase the time range or review your filter ";
+        return;
+      }
 
       // avoid reference between arrays!!!
       timeseries = xAxisValues[0].slice();
