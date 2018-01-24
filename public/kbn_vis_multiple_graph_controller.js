@@ -1,5 +1,4 @@
 import {uiModules} from 'ui/modules';
-import {AggResponseTabifyProvider} from 'ui/agg_response/tabify/tabify';
 import _ from 'lodash';
 import $ from 'jquery';
 import c3 from 'c3';
@@ -10,27 +9,24 @@ const module = uiModules.get('kibana/kbn_vis_multiple_graph', ['kibana']);
 
 // add a controller to tha module, which will transform the esResponse into a
 // tabular format that we can pass to the table directive
-module.controller('kbnVisMultipleGraphController', function ($scope, $element, $rootScope, Private) {
+module.controller('kbnVisMultipleGraphController', function ($scope, $element, $rootScope) {
+
+  const xAxisValues = [];
+  const parsedData = [];
+  const idchart = $element.children().find('.chartc3');
 
   let hold = '';
   let wold = '';
-  $rootScope.label_keys = [];
-  $rootScope.editorParams = {};
-  $rootScope.activate_grouped = false;
-
-  const tabifyAggResponse = Private(AggResponseTabifyProvider);
-
-  const xAxisValues = [];
   let timeseries = [];
-  const parsedData = [];
   let chartLabels = {};
   let xLabel = '';
   let timeFormat = '';
-
   // Identify the div element in the HTML
-  const idchart = $element.children().find('.chartc3');
   let message = 'This chart require more than one data point. Try adding an X-Axis Aggregation.';
 
+  $rootScope.label_keys = [];
+  $rootScope.editorParams = {};
+  $rootScope.activate_grouped = false;
 
   // Be alert to changes in vis_params
   $scope.$watch('vis.params', function (params) {
@@ -78,7 +74,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
           break;
       }
     });
-
+    console.log("dataTypes => ",dataTypes);
     // count bar charts and change bar ratio
     const theTypes = Object.values(dataTypes);
     const chartCount = {};
@@ -86,7 +82,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     _.each(theTypes, (i) => {
       chartCount[i] = (chartCount[i] || 0) + 1;
     });
-
+    console.log("chartCount => ",chartCount);
     let myRatio;
     if (chartCount.bar) {
 
@@ -105,9 +101,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       }
 
     }
-    console.log("$scope vis aggs bucket  name ->", $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
 
-    const bucketType = $scope.vis.aggs.bySchemaName['bucket'][0].type.name;
 
     let totalData;
     // define the data to representate
@@ -135,6 +129,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
         break;
     }
 
+    console.log("totalData => ",totalData);
     // largest number possible in JavaScript.
     let globalMin = Number.MAX_VALUE;
 
@@ -146,6 +141,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       globalMin = (eachArrayMin < globalMin) ? eachArrayMin : globalMin;
     });
 
+    console.log("parsedDataCopy => ",parsedDataCopy);
 
     globalMin = (globalMin >= 0) ? 0 : globalMin;
 
@@ -158,8 +154,11 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     config.data.labels = $scope.vis.params.dataLabels;
     config.legend = {'position': $scope.vis.params.legend_position};
 
+    console.log("$scope vis aggs bucket  name ->", $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
+    const bucketType = ( $scope.vis.aggs.bySchemaName['bucket'] && $scope.vis.aggs.bySchemaName['bucket'][0] && $scope.vis.aggs.bySchemaName['bucket'][0].type ? null : $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
+
     // timeseries config
-    if (bucketType === 'date_histogram' || bucketType === 'date_range') {
+    if (bucketType && (bucketType === 'date_histogram' || bucketType === 'date_range')) {
 
       config.bar = {'width': {'ratio': myRatio}};
 
@@ -290,7 +289,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       parsedData.length = 0;
       chartLabels = {};
       $rootScope.label_keys = [];
-      $scope.processTableGroups(tabifyAggResponse($scope.vis, resp));
+      $scope.processTableGroups(resp);
 
       // avoid reference between arrays!!!
       timeseries = xAxisValues[0].slice();
