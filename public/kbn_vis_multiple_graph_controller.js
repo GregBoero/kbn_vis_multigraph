@@ -11,6 +11,9 @@ const module = uiModules.get('kibana/kbn_vis_multiple_graph', ['kibana']);
 // tabular format that we can pass to the table directive
 module.controller('kbnVisMultipleGraphController', function ($scope, $element, $rootScope) {
 
+  //TODO remove $ from the dependence
+  //TODO improve the error handler
+
   const xAxisValues = [];
   const parsedData = [];
   const idchart = $element.children().find('.chartc3');
@@ -30,11 +33,13 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
   // Be alert to changes in vis_params
   $scope.$watch('vis.params', function (params) {
+    //FIXME use the param to just update the needed in the graph
     if (params) {
       console.log("param => ", params);
     }
+
     if (!$rootScope.show_chart) return;
-    //if (Object.keys(params.editorPanel).length == 0 && params.enableZoom == previo_zoom) return;
+
     $scope.chartGen();
   });
 
@@ -48,6 +53,8 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
     //create data_colors object
     const theLabels = Object.keys(chartLabels);
+
+    //FIXME both object are not really const
     const dataColors = {};
     const dataTypes = {};
 
@@ -107,6 +114,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     let totalData;
     // define the data to representate
 
+    //TODO make the code more clear and clean duplicate info (just construct the array)
     switch (parsedData.length) {
       case 0:
         message = "Something went wrong during data representation";
@@ -168,6 +176,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       const firstTimestamp = timeseries[1];
       const timestampDiff = lastTimestapm - firstTimestamp;
 
+      //TODO make the timeFormat settable in the option for > 86400000
       if (timestampDiff > 86400000) {
         timeFormat = '%Y-%m-%d';
       } else {
@@ -293,7 +302,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       $rootScope.label_keys = [];
       $scope.processTableGroups(resp);
 
-      if (!xAxisValues) {
+      if (!xAxisValues[0]) {
         $scope.waiting = "No data to display increase the time range or review your filter ";
         return;
       }
