@@ -50,27 +50,29 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     const theLabels = Object.keys(chartLabels);
     const dataColors = {};
     const dataTypes = {};
-    const labelActionMap = {
-      0: () => {
-        dataColors[chart] = $scope.vis.params.color1;
-        dataTypes[chart] = $scope.vis.params.type1;
-      },
-      1: () => {
-        dataColors[chart] = $scope.vis.params.color1;
-        dataTypes[chart] = $scope.vis.params.type1;
-      },
-      2: () => {
-        dataColors[chart] = $scope.vis.params.color1;
-        dataTypes[chart] = $scope.vis.params.type1;
-      },
-      4: () => {
-        dataColors[chart] = $scope.vis.params.color1;
-        dataTypes[chart] = $scope.vis.params.type1;
-      }
-    };
+
     _.each(theLabels, (chart, index) => {
-      if(index >= 0 && index <= 4){
-        labelActionMap[index]();
+      switch (index) {
+        case 0:
+          dataColors[chart] = $scope.vis.params.color1;
+          dataTypes[chart] = $scope.vis.params.type1;
+          break;
+        case 1:
+          dataColors[chart] = $scope.vis.params.color2;
+          dataTypes[chart] = $scope.vis.params.type2;
+          break;
+        case 2:
+          dataColors[chart] = $scope.vis.params.color3;
+          dataTypes[chart] = $scope.vis.params.type3;
+          break;
+        case 3:
+          dataColors[chart] = $scope.vis.params.color4;
+          dataTypes[chart] = $scope.vis.params.type4;
+          break;
+        case 4:
+          dataColors[chart] = $scope.vis.params.color5;
+          dataTypes[chart] = $scope.vis.params.type5;
+          break;
       }
     });
     console.log("dataTypes => ", dataTypes);
