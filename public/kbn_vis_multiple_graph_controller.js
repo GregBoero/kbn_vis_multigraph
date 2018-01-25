@@ -23,7 +23,6 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
   let timeseries = [];
   let chartLabels = {};
   let xLabel = '';
-  let timeFormat = '';
   // Identify the div element in the HTML
   let message = 'This chart require more than one data point. Try adding an X-Axis Aggregation.';
 
@@ -110,34 +109,31 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
     }
 
-
-    let totalData;
-    // define the data to representate
-
-    //TODO make the code more clear and clean duplicate info (just construct the array)
-    switch (parsedData.length) {
-      case 0:
+    let getDataArrayMap = {
+      0: () => {
         message = "Something went wrong during data representation";
-        break;
-      case 1:
-        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0]]};
-        break;
-      case 2:
-        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1]]};
-        break;
-      case 3:
-        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2]]};
-        break;
-      case 4:
-        totalData = {'x': 'x1', 'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]};
-        break;
-      default:
-        totalData = {
-          'x': 'x1',
-          'columns': [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
-        };
-        break;
-    }
+      },
+      1: () => {
+        return [timeseries, parsedData[0]];
+      },
+      2: () => {
+        return [timeseries, parsedData[0], parsedData[1]]
+      },
+      3: () => {
+        return [timeseries, parsedData[0], parsedData[1], parsedData[2]]
+      },
+      4: () => {
+        return [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]
+      },
+      5: () => {
+        return [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
+      }
+    };
+    // define the data to show
+    let totalData = {
+      'x': 'x1',
+      'columns': parsedData.length > 4 ? getDataArrayMap[5]() : getDataArrayMap[parsedData.length]()
+    };
 
     console.log("totalData => ", totalData);
     // largest number possible in JavaScript.
@@ -171,30 +167,20 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     if (bucketType && (bucketType === 'date_histogram' || bucketType === 'date_range')) {
 
       config.bar = {'width': {'ratio': myRatio}};
-
-      const lastTimestapm = timeseries[timeseries.length - 1];
-      const firstTimestamp = timeseries[1];
-      const timestampDiff = lastTimestapm - firstTimestamp;
-
-      //TODO make the timeFormat settable in the option for > 86400000
-      if (timestampDiff > 86400000) {
-        timeFormat = '%Y-%m-%d';
-      } else {
-        timeFormat = '%H:%M';
-      }
-
-      const boolFit = (timeseries.length < 4);
-
       config.axis = {
         'x': {
           'label': {'text': xLabel, 'position': 'outer-center'},
           'type': 'timeseries',
-          'tick': {'fit': boolFit, 'multiline': false, 'format': timeFormat}
+          'tick': {
+            'fit': (timeseries.length < 4),
+            'multiline': false,
+            'format': (timeseries[timeseries.length - 1] - timeseries[1]) > 86400000 ? $scope.vis.params.time_format : '%H:%M'
+          }
         }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 0}}
       };
       config.tooltip = {
         'format': {
-          'title': function (x) {
+          'title': (x) => {
             return x;
           }
         }

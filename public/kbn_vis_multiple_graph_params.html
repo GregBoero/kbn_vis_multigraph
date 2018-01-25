@@ -120,12 +120,28 @@
 </div>
 
 <div class="form-group">
+  <form>
+    <h4>Chart Time display </h4>
+
+    <div ng-show="$root.label_keys.length > 0">
+      <label for="sel3"> Time format</label>
+      <select class="form-control" id="sel3" ng-model="vis.params.time_format">
+        <option value="%d-%m-%Y">day - month - Years </option>
+        <option value="%Y-%m">Years  -  month</option>
+        <option value="%M">Month</option>
+        <option value="%Y">Years</option>
+      </select>
+    </div>
+  </form>
+</div>
+
+<div class="form-group">
 
   <form>
     <h4>Others</h4>
     <div clas="show-if-chart" ng-show="$root.show_chart">
 
-      <div class="form-group">
+      <div class="form-group" ng-show="shouldShowHidePoint()">
         <label> Hide Points </label>
         <input type="checkbox" ng-model="vis.params.hidePoints"> (For line and spline charts)
       </div>
@@ -140,10 +156,10 @@
         <input type="checkbox" ng-model="vis.params.gridlines">
       </div>
 
-      <div class="form-group">
+      <div class="form-group" ng-show="shouldShowGrouped()">
         <!-- ng-show="$root.activate_grouped" -->
         <label> Stacked Bar Mode </label>
-        <input type="checkbox" ng-model="vis.params.grouped"> (Needs at least 2 bar charts)
+        <input type="checkbox" ng-model="vis.params.grouped" > (Needs at least 2 bar charts)
       </div>
 
       <div class="form-group">
