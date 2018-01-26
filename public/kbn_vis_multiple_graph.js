@@ -1,7 +1,7 @@
 import 'plugins/kbn_vis_multiple_graph/kbn_vis_multiple_graph.less';
 import 'plugins/kbn_vis_multiple_graph/kbn_vis_multiple_graph_controller';
 import 'plugins/kbn_vis_multiple_graph/kbn_vis_multiple_graph_params';
-import 'plugins/kbn_vis_multiple_graph/node_modules/c3/c3.css'
+import '../node_modules/c3/c3.css'
 
 import 'ui/agg_table';
 import 'ui/agg_table/agg_table_group';
