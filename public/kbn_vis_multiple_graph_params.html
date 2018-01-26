@@ -123,13 +123,14 @@
   <form>
     <h4>Chart Time display </h4>
 
-    <div ng-show="$root.label_keys.length > 0">
-      <label for="sel3"> Time format</label>
-      <select class="form-control" id="sel3" ng-model="vis.params.time_format">
+    <div>
+      <label for="sel-time"> Time format</label>
+      <select class="form-control" id="sel-time" ng-model="vis.params.time_format">
         <option value="%d-%m-%Y">day - month - Years </option>
         <option value="%Y-%m">Years  -  month</option>
         <option value="%M">Month</option>
         <option value="%Y">Years</option>
+        <option value="%H:%M">Hours Min</option>
       </select>
     </div>
   </form>

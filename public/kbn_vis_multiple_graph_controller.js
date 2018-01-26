@@ -16,11 +16,11 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
   const xAxisValues = [];
   const parsedData = [];
-  const idchart = $element.children().find('.chartc3');
+  const idChart = $element.children().find('.chartc3');
 
   let hold = '';
   let wold = '';
-  let timeseries = [];
+  let timeSeries = [];
   let chartLabels = {};
   let xLabel = '';
   // Identify the div element in the HTML
@@ -40,6 +40,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     if (!$rootScope.show_chart) return;
 
     $scope.chartGen();
+    $element.trigger('renderComplete');
   });
 
 
@@ -93,7 +94,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     let myRatio;
     if (chartCount.bar) {
 
-      myRatio = 5 / timeseries.length;
+      myRatio = 5 / timeSeries.length;
       myRatio = (myRatio > 0.35) ? 0.3 : myRatio;
 
       if (chartCount.bar > 1) {
@@ -114,19 +115,19 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
         message = "Something went wrong during data representation";
       },
       1: () => {
-        return [timeseries, parsedData[0]];
+        return [timeSeries, parsedData[0]];
       },
       2: () => {
-        return [timeseries, parsedData[0], parsedData[1]]
+        return [timeSeries, parsedData[0], parsedData[1]]
       },
       3: () => {
-        return [timeseries, parsedData[0], parsedData[1], parsedData[2]]
+        return [timeSeries, parsedData[0], parsedData[1], parsedData[2]]
       },
       4: () => {
-        return [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]
+        return [timeSeries, parsedData[0], parsedData[1], parsedData[2], parsedData[3]]
       },
       5: () => {
-        return [timeseries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
+        return [timeSeries, parsedData[0], parsedData[1], parsedData[2], parsedData[3], parsedData[4]]
       }
     };
     // define the data to show
@@ -153,7 +154,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
     // configurate C3 object
     const config = {};
-    config.bindto = idchart[0];
+    config.bindto = idChart[0];
     config.data = totalData;
     config.data.types = dataTypes;
     config.data.colors = dataColors;
@@ -163,18 +164,18 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     console.log("$scope vis aggs bucket  name ->", $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
     const bucketType = ($scope.vis.aggs.bySchemaName['bucket'] && $scope.vis.aggs.bySchemaName['bucket'][0] && $scope.vis.aggs.bySchemaName['bucket'][0].type ? null : $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
 
-    // timeseries config
+    // timeSeries config
     if (bucketType && (bucketType === 'date_histogram' || bucketType === 'date_range')) {
 
       config.bar = {'width': {'ratio': myRatio}};
       config.axis = {
         'x': {
           'label': {'text': xLabel, 'position': 'outer-center'},
-          'type': 'timeseries',
+          'type': 'timeSeries',
           'tick': {
-            'fit': (timeseries.length < 4),
+            'fit': (timeSeries.length < 4),
             'multiline': false,
-            'format': (timeseries[timeseries.length - 1] - timeseries[1]) > 86400000 ? $scope.vis.params.time_format : '%H:%M'
+            'format': $scope.vis.params.time_format
           }
         }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 0}}
       };
@@ -201,7 +202,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
         }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 1}}
       };
 
-      if (timeseries.length - 1 > 13 && $scope.vis.params.fewXAxis) {
+      if (timeSeries.length - 1 > 13 && $scope.vis.params.fewXAxis) {
         config.axis = {
           'x': {
             'label': {'text': xLabel, 'position': 'outer-center'},
@@ -239,7 +240,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     $scope.chart = c3.generate(config);
 
     // resize
-    const elem = $(idchart[0]).closest('div.visualize-chart');
+    const elem = $(idChart[0]).closest('div.visualize-chart');
     const h = elem.height();
     const w = elem.width();
     $scope.chart.resize({height: h - 50, width: w - 50});
@@ -282,7 +283,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       }
 
       xAxisValues.length = 0;
-      timeseries.length = 0;
+      timeSeries.length = 0;
       parsedData.length = 0;
       chartLabels = {};
       $rootScope.label_keys = [];
@@ -294,8 +295,8 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       }
 
       // avoid reference between arrays!!!
-      timeseries = xAxisValues[0].slice();
-      timeseries.splice(0, 0, 'x1');
+      timeSeries = xAxisValues[0].slice();
+      timeSeries.splice(0, 0, 'x1');
       $scope.chartGen();
     }
 
@@ -304,13 +305,13 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
   // Automatic resizing of graphics
   $scope.$watch(
     function () {
-      const elem = $(idchart[0]).closest('div.visualize-chart');
+      const elem = $(idChart[0]).closest('div.visualize-chart');
       const h = elem.height();
       const w = elem.width();
 
       if (!$scope.chart) return;
 
-      if (idchart.length > 0 && h > 0 && w > 0) {
+      if (idChart.length > 0 && h > 0 && w > 0) {
 
         if (hold !== h || wold !== w) {
           $scope.chart.resize({height: h - 50, width: w - 50});

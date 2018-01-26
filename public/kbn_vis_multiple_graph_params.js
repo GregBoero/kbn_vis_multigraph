@@ -20,10 +20,11 @@ uiModules.get('kibana/kbn_vis_multiple_graph')
 
         $scope.shouldShowGrouped = () => {
           //TODO don't right all the chart type iterate over them
-          const chartType = [$scope.vis.params.type1, $scope.vis.params.type2, $scope.vis.params.type3, $scope.vis.params.type4, $scope.vis.params.type5]
-          let numberOfBarChart = chartType.map(value => {
-            if (value === 'bar') {
-              return value;
+          const chartType = [$scope.vis.params.type1, $scope.vis.params.type2, $scope.vis.params.type3, $scope.vis.params.type4, $scope.vis.params.type5];
+          let numberOfBarChart = 0 ;
+          chartType.forEach((type) =>{
+            if(type === 'bar'){
+              numberOfBarChart++;
             }
           });
           return numberOfBarChart >= 2;
