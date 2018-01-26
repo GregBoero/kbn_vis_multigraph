@@ -34,7 +34,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
   $scope.$watch('vis.params', function (params) {
     //FIXME use the param to just update the needed in the graph
     if (params) {
-      console.log("param => ", params);
+      console.debug("param => ", params);
     }
 
     if (!$rootScope.show_chart) return;
@@ -82,7 +82,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
           break;
       }
     });
-    console.log("dataTypes => ", dataTypes);
+    console.debug("dataTypes => ", dataTypes);
     // count bar charts and change bar ratio
     const theTypes = Object.values(dataTypes);
     const chartCount = {};
@@ -90,7 +90,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     _.each(theTypes, (i) => {
       chartCount[i] = (chartCount[i] || 0) + 1;
     });
-    console.log("chartCount => ", chartCount);
+    console.debug("chartCount => ", chartCount);
     let myRatio;
     if (chartCount.bar) {
 
@@ -136,7 +136,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       'columns': parsedData.length > 4 ? getDataArrayMap[5]() : getDataArrayMap[parsedData.length]()
     };
 
-    console.log("totalData => ", totalData);
+    console.debug("totalData => ", totalData);
     // largest number possible in JavaScript.
     let globalMin = Number.MAX_VALUE;
 
@@ -148,7 +148,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
       globalMin = (eachArrayMin < globalMin) ? eachArrayMin : globalMin;
     });
 
-    console.log("parsedDataCopy => ", parsedDataCopy);
+    console.debug("parsedDataCopy => ", parsedDataCopy);
 
     globalMin = (globalMin >= 0) ? 0 : globalMin;
 
@@ -161,7 +161,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     config.data.labels = $scope.vis.params.dataLabels;
     config.legend = {'position': $scope.vis.params.legend_position};
 
-    console.log("$scope vis aggs bucket  name ->", $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
+    console.debug("$scope vis aggs bucket  name ->", $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
     const bucketType = ($scope.vis.aggs.bySchemaName['bucket'] && $scope.vis.aggs.bySchemaName['bucket'][0] && $scope.vis.aggs.bySchemaName['bucket'][0].type ? null : $scope.vis.aggs.bySchemaName['bucket'][0].type.name);
 
     // timeSeries config
@@ -276,7 +276,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
   $scope.$watch('esResponse', function (resp) {
     if (resp) {
-      console.log("$scope vis aggs bucket  ->", $scope.vis.aggs.bySchemaName['bucket']);
+      console.debug("$scope vis aggs bucket  ->", $scope.vis.aggs.bySchemaName['bucket']);
       if (!$scope.vis.aggs.bySchemaName['bucket']) {
         $scope.waiting = message;
         return;
