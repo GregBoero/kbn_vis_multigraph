@@ -1,7 +1,7 @@
 {
   "name": "kbn_vis_multiple_graph",
-  "version": "0.0.1",
-  "description": "kibana test plugin",
+  "version": "1.0.0",
+  "description": "Kibana plugin that allow us to display data in multiple graph (max 4)",
   "kibana": {
     "version": "6.1.3"
   },
