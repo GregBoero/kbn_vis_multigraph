@@ -8,8 +8,12 @@
 
 
 ## Status : 
-| *in Development* | released         |
-|  *working*       | not working      |
+|*in Development*| released     |
+|:-------------:|:-------------:|
+
+|*working*      | not working   |
+|:-------------:|:-------------:|
+
 
 | Kibana version| Compatible    | check          | 
 |:-------------:|:-------------:|:-------------: |
