@@ -1,6 +1,6 @@
 # kbn_vis_multi_graph
 
-> kibana plugin how allow us to display data in multiple graph (max 4) 
+> Kibana plugin that allow us to display data in multiple graph (max 4) 
 
 > Available chart type : Bar chart / Line Chart / Spline Chart / Step Chart / Dot Chart / Area Chart / Area-Spline Chart / Area-Step Chart
 ---
@@ -25,7 +25,7 @@ $ cd KIBANA_HOME/plugins
 $ git clone https://github.com/GregBoero/kbn_vis_multiple_graph.git
 $ cd kbn_vis_multiple_graph
  (if needed)
-$ vi(m) ./package.json (change the kibana vertion to yours)
+$ vi(m) ./package.json (change the kibana version to yours)
 $ npm install
 ```
 
