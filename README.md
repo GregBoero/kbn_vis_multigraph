@@ -35,4 +35,11 @@ $ npm install
 
 ## Development
 
+#### Minor
+- Change the logo of the graph to use a accurate one 
+- Fix the TODO and FIXME in the Code
+#### Major
+- Add option Conditional Y-axis in order to condition the data displayed  
+- Add some css to be more user friendly 
+
 See the [kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) for instructions setting up your development environment. Once you have completed that, use the following npm tasks.
