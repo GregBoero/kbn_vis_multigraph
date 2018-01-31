@@ -11,7 +11,7 @@
 |*in Development*| released     |
 |:-------------:|:-------------:|
 
-|*working*      | not working   |
+| working       |*not working*  |
 |:-------------:|:-------------:|
 
 
