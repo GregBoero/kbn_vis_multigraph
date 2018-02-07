@@ -206,7 +206,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
           'x': {
             'label': { 'text': xLabel, 'position': 'outer-center' },
             'type': 'category',
-            'tick': { 'fit': false, 'multiline': false, 'culling': { 'max': 10 } }
+            'tick': { 'fit': false, 'multiline': false, 'culling': { 'max': 10 }, 'format': $scope.vis.params.time_format }
           }, 'y': { 'min': globalMin, 'padding': { 'top': 30, 'bottom': 1 } }
         };
       }
@@ -239,7 +239,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     $scope.chart = c3.generate(config);
 
     // resize
-    const elem = $(idChart[0]).closest('div.visualize-chart');
+    const elem =  angular.element(document.querySelector(idChart[0])).closest('div.visualize-chart');
     const h = elem.height();
     const w = elem.width();
     $scope.chart.resize({ height: h - 50, width: w - 50 });
