@@ -8,7 +8,7 @@ const module = uiModules.get('kibana/kbn_vis_multiple_graph', ['kibana']);
 
 // add a controller to tha module, which will transform the esResponse into a
 // tabular format that we can pass to the table directive
-module.controller('kbnVisMultipleGraphController', function ($scope, $element, $rootScope) {
+module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope) => {
 
   //TODO improve the error handler
 
@@ -29,7 +29,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
   $rootScope.activate_grouped = false;
 
   // Be alert to changes in vis_params
-  $scope.$watch('vis.params', function (params) {
+  $scope.$watch('vis.params', (params) => {
     //FIXME use the param to just update the needed in the graph
     if (params) {
       console.debug('param => ', params);
@@ -239,7 +239,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
     $scope.chart = c3.generate(config);
 
     // resize
-    const elem =  angular.element(document.querySelector(idChart[0])).closest('div.visualize-chart');
+    const elem =  angular.element(idChart[0]).closest('div.visualize-chart');
     const h = elem.height();
     const w = elem.width();
     $scope.chart.resize({ height: h - 50, width: w - 50 });
@@ -273,7 +273,7 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
   };
 
 
-  $scope.$watch('esResponse', function (resp) {
+  $scope.$watch('esResponse', (resp) => {
     if (resp) {
       console.debug('$scope vis aggs bucket  ->', $scope.vis.aggs.bySchemaName.bucket);
       if (!$scope.vis.aggs.bySchemaName.bucket) {
@@ -303,8 +303,8 @@ module.controller('kbnVisMultipleGraphController', function ($scope, $element, $
 
   // Automatic resizing of graphics
   $scope.$watch(
-    function () {
-      const elem = angular.element(document.querySelector(idChart[0])).closest('div.visualize-chart');
+    () => {
+      const elem = angular.element(idChart[0]).closest('div.visualize-chart');
       const h = elem.height();
       const w = elem.width();
 
