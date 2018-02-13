@@ -2,11 +2,11 @@
     <form>
         <h4>Chart option</h4>
         <div class="opt-group">
-                <fieldset ng-repeat="chart in vis.params.charts_option">
+                <fieldset ng-repeat="chart in $root.charts_option">
                     <legend> {{chart.label}}</legend>
                     <div class="form-group">
                         <label for="sel1">Type :</label>
-                        <select class="form-control" id="sel1" ng-model="chart.type">
+                        <select class="form-control" id="sel1" ng-model="chart.type" ng-change="setHasChange()">
                             <option value="bar">Bar chart</option>
                             <option value="line">Line Chart</option>
                             <option value="spline">Spline Chart</option>
@@ -19,7 +19,7 @@
                     </div>
                     <div class="form-group">
                         <label for="sel3">Color :</label>
-                        <input type="color" name="sel3" id="sel3" ng-model="chart.color" class="form-control">
+                        <input type="color" name="sel3" id="sel3" ng-model="chart.color" class="form-control" ng-change="setHasChange()">
                     </div>
                 </fieldset>
         </div>
