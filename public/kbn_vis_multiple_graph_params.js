@@ -8,6 +8,10 @@ uiModules.get('kibana/kbn_vis_multiple_graph')
       template: tableVisParamsTemplate,
       link: ($scope) => {
 
+        if(!$scope.$root.charts_option || ($scope.$root.charts_option && $scope.$root.charts_option.length < 1)){
+          $scope.$root.charts_option = $scope.vis.params.charts_option;
+        }
+
         $scope.setHasChange = () => {
           $scope.vis.params.charts_option = $scope.$root.charts_option;
         };

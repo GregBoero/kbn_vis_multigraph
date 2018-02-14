@@ -1,95 +1,121 @@
-<div class="form-group">
-    <form>
-        <h4>Chart option</h4>
-        <div class="opt-group">
-                <fieldset ng-repeat="chart in $root.charts_option">
-                    <legend> {{chart.label}}</legend>
-                    <div class="form-group">
-                        <label for="sel1">Type :</label>
-                        <select class="form-control" id="sel1" ng-model="chart.type" ng-change="setHasChange()">
-                            <option value="bar">Bar chart</option>
-                            <option value="line">Line Chart</option>
-                            <option value="spline">Spline Chart</option>
-                            <option value="step">Step Chart</option>
-                            <option value="scatter">Dot Chart</option>
-                            <option value="area">Area Chart</option>
-                            <option value="area-spline">Area-Spline Chart</option>
-                            <option value="area-step">Area-Step Chart</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="sel3">Color :</label>
-                        <input type="color" name="sel3" id="sel3" ng-model="chart.color" class="form-control" ng-change="setHasChange()">
-                    </div>
-                </fieldset>
+<div>
+    <div class="kuiSideBarSection kuiSideBarSection__main">
+        <div class="kuiSideBarSectionTitle">
+            <div class="kuiSideBarSectionTitle__text"> Metrics </div>
         </div>
-    </form>
-</div>
+        <div ng-repeat="chart in $root.charts_option" class="kuiSideBarSection">
+            <div class="kuiSideBarCollapsibleTitle">
+                <div ng-init="isSeriesOpen = ($index === 0)" class="kuiSideBarCollapsibleTitle__label"
+                     ng-click="isSeriesOpen = !isSeriesOpen" kbn-accessible-click aria-expanded="true"
+                     aria-controls="visSeriesOptions0"
+                     aria-label="Toggle Count options" tabindex="0" role="button">
+                        <span aria-hidden="true"
+                              ng-class="{ 'fa-caret-down': isSeriesOpen, 'fa-caret-right': !isSeriesOpen }"
+                              class="kuiIcon kuiSideBarCollapsibleTitle__caret"></span>
+                    <span class="kuiSideBarCollapsibleTitle__text">  {{chart.label}} </span>
+                </div>
+            </div>
+            <div id="visSeriesOptions0" ng-show="isSeriesOpen" class="kuiSideBarCollapsibleSection"
+                 aria-hidden="false">
+                <!-- General -->
+                <div class="kuiSideBarSection">
 
-<div class="form-group">
-    <form>
-        <h4>Chart Time display </h4>
+                    <div class="kuiSideBarFormRow">
+                        <label class="kuiSideBarFormRow__label" for="sel1">
+                            Chart Type
+                        </label>
+                        <div class="kuiSideBarFormRow__control">
+                            <select class="form-control" id="sel1" ng-model="chart.type" ng-change="setHasChange()">
+                                <option value="bar">Bar chart</option>
+                                <option value="line">Line Chart</option>
+                                <option value="spline">Spline Chart</option>
+                                <option value="step">Step Chart</option>
+                                <option value="scatter">Dot Chart</option>
+                                <option value="area">Area Chart</option>
+                                <option value="area-spline">Area-Spline Chart</option>
+                                <option value="area-step">Area-Step Chart</option>
+                            </select>
+                        </div>
+                    </div>
 
-        <div>
-            <label for="sel-time"> Time format</label>
-            <select class="form-control" id="sel-time" ng-model="vis.params.time_format">
-                <option value="%d-%m-%Y">day - month - Years</option>
-                <option value="%Y-%m">Years - month</option>
-                <option value="%M">Month</option>
-                <option value="%Y">Years</option>
-                <option value="%H:%M">Hours Min</option>
-            </select>
+                    <div class="kuiSideBarFormRow">
+                        <label class="kuiSideBarFormRow__label" for="sel3">
+                            Color
+                        </label>
+                        <div class="kuiSideBarFormRow__control">
+                            <input type="color" name="sel3" id="sel3" ng-model="chart.color" class="form-control"
+                                   ng-change="setHasChange()">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
-</div>
+    </div>
 
-<div class="form-group">
+    <div class="form-group">
+        <form>
+            <h4>Chart Time display </h4>
 
-    <form>
-        <h4>Others</h4>
-        <div clas="show-if-chart" ng-show="$root.show_chart">
-
-            <div class="form-group" ng-show="shouldShowHidePoint()">
-                <label> Hide Points </label>
-                <input type="checkbox" ng-model="vis.params.hidePoints"> (For line and spline charts)
-            </div>
-
-            <div class="form-group">
-                <label> Enable zoom </label>
-                <input type="checkbox" ng-model="vis.params.enableZoom">
-            </div>
-
-            <div class="form-group">
-                <label> Show grid lines </label>
-                <input type="checkbox" ng-model="vis.params.gridlines">
-            </div>
-
-            <div class="form-group" ng-show="shouldShowGrouped()">
-                <!-- ng-show="$root.activate_grouped" -->
-                <label> Stacked Bar Mode </label>
-                <input type="checkbox" ng-model="vis.params.grouped"> (Needs at least 2 bar charts)
-            </div>
-
-            <div class="form-group">
-                <label> Activate Data Labels </label>
-                <input type="checkbox" ng-model="vis.params.dataLabels">
-            </div>
-
-            <div class="form-group">
-                <label> Show just a few x-axis tick values </label>
-                <input type="checkbox" ng-model="vis.params.fewXAxis">
-            </div>
-
-            <div class="form-group">
-                <label for="sel-legend">Choose legend position</label>
-                <select class="form-control" id="sel-legend" ng-model="vis.params.legend_position">
-                    <option value="right">Right</option>
-                    <option value="bottom">Bottom</option>
+            <div>
+                <label for="sel-time"> Time format</label>
+                <select class="form-control" id="sel-time" ng-model="vis.params.time_format">
+                    <option value="%d-%m-%Y">day - month - Years</option>
+                    <option value="%Y-%m">Years - month</option>
+                    <option value="%M">Month</option>
+                    <option value="%Y">Years</option>
+                    <option value="%H:%M">Hours Min</option>
                 </select>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+
+    <div class="form-group">
+
+        <form>
+            <h4>Others</h4>
+            <div clas="show-if-chart" ng-show="$root.show_chart">
+
+                <div class="form-group" ng-show="shouldShowHidePoint()">
+                    <label> Hide Points </label>
+                    <input type="checkbox" ng-model="vis.params.hidePoints"> (For line and spline charts)
+                </div>
+
+                <div class="form-group">
+                    <label> Enable zoom </label>
+                    <input type="checkbox" ng-model="vis.params.enableZoom">
+                </div>
+
+                <div class="form-group">
+                    <label> Show grid lines </label>
+                    <input type="checkbox" ng-model="vis.params.gridlines">
+                </div>
+
+                <div class="form-group" ng-show="shouldShowGrouped()">
+                    <!-- ng-show="$root.activate_grouped" -->
+                    <label> Stacked Bar Mode </label>
+                    <input type="checkbox" ng-model="vis.params.grouped"> (Needs at least 2 bar charts)
+                </div>
+
+                <div class="form-group">
+                    <label> Activate Data Labels </label>
+                    <input type="checkbox" ng-model="vis.params.dataLabels">
+                </div>
+
+                <div class="form-group">
+                    <label> Show just a few x-axis tick values </label>
+                    <input type="checkbox" ng-model="vis.params.fewXAxis">
+                </div>
+
+                <div class="form-group">
+                    <label for="sel-legend">Choose legend position</label>
+                    <select class="form-control" id="sel-legend" ng-model="vis.params.legend_position">
+                        <option value="right">Right</option>
+                        <option value="bottom">Bottom</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
 
 
 

@@ -231,6 +231,9 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
 
   // Get data from ES
   $scope.processTableGroups = (tableGroups) => {
+    if(!$scope.$root.charts_option || ($scope.$root.charts_option && $scope.$root.charts_option.length < 1)){
+      $scope.$root.charts_option = $scope.vis.params.charts_option;
+    }
     let chart_opt = [];
     if (tableGroups && tableGroups.tables) {
       _.each(tableGroups.tables, (table) => {
