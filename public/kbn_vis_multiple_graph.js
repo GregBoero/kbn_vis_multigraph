@@ -41,23 +41,16 @@ function TableVisTypeProvider(Private) {
     category: CATEGORY.OTHER,
     visConfig: {
       defaults: {
-        type1: 'line',
-        color1: '#1f77b4',
-        type2: 'line',
-        color2: '#ff7f0e',
-        type3: 'line',
-        color3: '#2ca02c',
-        type4: 'line',
-        color4: '#d62728',
-        type5: 'line',
-        color5: '#9467bd',
+        charts_option: Array(),
+        chart_type: 'line',
+        chart_color: '#1f77b4',
         enableZoom: false,
         dataLabels: false,
         hidePoints: false,
         gridlines: false,
         few_x_axis: false,
         legend_position: 'right',
-        time_format: '%d-%m-%Y',
+        time_format: '%Y-%m-%d',
         grouped: false
       },
       template: tableVisTemplate,
@@ -82,6 +75,22 @@ function TableVisTypeProvider(Private) {
           min: 1,
           max: 1,
           aggFilter: ['!geohash_grid']
+        },
+        {
+          group: 'buckets',
+          name: 'group',
+          title: 'Split Series',
+          min: 0,
+          max: 1,
+          aggFilter: ['!geohash_grid', '!filter']
+        },
+        {
+          group: 'buckets',
+          name: 'split',
+          title: 'Split Chart',
+          min: 0,
+          max: 1,
+          aggFilter: ['!geohash_grid', '!filter']
         }
       ])
     },

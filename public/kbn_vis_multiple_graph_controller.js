@@ -1,4 +1,4 @@
-import { uiModules } from 'ui/modules';
+import {uiModules} from 'ui/modules';
 import _ from 'lodash';
 import c3 from 'c3';
 
@@ -21,26 +21,27 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
   let timeSeries = [];
   let chartLabels = {};
   let xLabel = '';
+  let isTimeSeries = false;
   // Identify the div element in the HTML
   let message = 'This chart require more than one data point. Try adding an X-Axis Aggregation.';
 
-  $rootScope.label_keys = [];
+  // this function type the option object
+  let gen_chart_opt = (id, label, type, color) => {
+    return {id: id, label: label, type: type, color: color};
+  };
+
   $rootScope.editorParams = {};
   $rootScope.activate_grouped = false;
 
   // Be alert to changes in vis_params
   $scope.$watch('vis.params', (params) => {
-    //FIXME use the param to just update the needed in the graph
     if (params) {
       console.debug('param => ', params);
     }
-
     if (!$rootScope.show_chart) return;
 
     $scope.chartGen();
-    $element.trigger('renderComplete');
   });
-
 
   // C3JS chart generator
   $scope.chart = null;
@@ -49,37 +50,14 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
     // change bool value
     $rootScope.show_chart = true;
 
-    //create data_colors object
-    const theLabels = Object.keys(chartLabels);
+    let dataColors = {};
+    let dataTypes = {};
 
-    //FIXME both object are not really const
-    const dataColors = {};
-    const dataTypes = {};
-
-    _.each(theLabels, (chart, index) => {
-      switch (index) {
-        case 0:
-          dataColors[chart] = $scope.vis.params.color1;
-          dataTypes[chart] = $scope.vis.params.type1;
-          break;
-        case 1:
-          dataColors[chart] = $scope.vis.params.color2;
-          dataTypes[chart] = $scope.vis.params.type2;
-          break;
-        case 2:
-          dataColors[chart] = $scope.vis.params.color3;
-          dataTypes[chart] = $scope.vis.params.type3;
-          break;
-        case 3:
-          dataColors[chart] = $scope.vis.params.color4;
-          dataTypes[chart] = $scope.vis.params.type4;
-          break;
-        case 4:
-          dataColors[chart] = $scope.vis.params.color5;
-          dataTypes[chart] = $scope.vis.params.type5;
-          break;
-      }
+    _.each($rootScope.charts_option, (chart) => {
+      dataColors[chart.label] = chart.color;
+      dataTypes[chart.label] = chart.type;
     });
+
     console.debug('dataTypes => ', dataTypes);
     // count bar charts and change bar ratio
     const theTypes = Object.values(dataTypes);
@@ -157,26 +135,32 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
     config.data.types = dataTypes;
     config.data.colors = dataColors;
     config.data.labels = $scope.vis.params.dataLabels;
-    config.legend = { 'position': $scope.vis.params.legend_position };
-
-    console.debug('$scope vis aggs bucket  name ->', $scope.vis.aggs.bySchemaName.bucket[0].type.name);
-    const bySchemaNameBucket = $scope.vis.aggs.bySchemaName.bucket;
-    const bucketType = (bySchemaNameBucket && bySchemaNameBucket[0] && bySchemaNameBucket[0].type ? null : bySchemaNameBucket[0].type.name);
+    config.legend = {'position': $scope.vis.params.legend_position};
 
     // timeSeries config
-    if (bucketType && (bucketType === 'date_histogram' || bucketType === 'date_range')) {
+    if (isTimeSeries) {
+      console.log('a time seris');
+      config.bar = {'width': {'ratio': myRatio}};
+      let timeFormat;
+      const lastTimestapm = timeSeries[timeSeries.length - 1];
+      const firstTimestamp = timeSeries[1];
+      const timestampDiff = lastTimestapm - firstTimestamp;
 
-      config.bar = { 'width': { 'ratio': myRatio } };
+      if (timestampDiff > 86400000) {
+        timeFormat = $scope.vis.params.time_format;
+      } else {
+        timeFormat = '%H:%M';
+      }
       config.axis = {
         'x': {
-          'label': { 'text': xLabel, 'position': 'outer-center' },
+          'label': {'text': xLabel, 'position': 'outer-center'},
           'type': 'timeSeries',
           'tick': {
             'fit': (timeSeries.length < 4),
             'multiline': false,
-            'format': $scope.vis.params.time_format
+            'format': timeFormat
           }
-        }, 'y': { 'min': globalMin, 'padding': { 'top': 30, 'bottom': 0 } }
+        }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 0}}
       };
       config.tooltip = {
         'format': {
@@ -187,27 +171,32 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
       };
 
       if ($scope.vis.params.legend_position === 'bottom') {
-        config.padding = { 'right': 20 };
+        config.padding = {'right': 20};
       }
-
       // category data config
     } else {
-
+      console.log('not a time seris');
       config.axis = {
         'x': {
-          'label': { 'text': xLabel, 'position': 'outer-center' },
+          'label': {'text': xLabel, 'position': 'outer-center'},
           'type': 'category',
-          'tick': { 'multiline': false }
-        }, 'y': { 'min': globalMin, 'padding': { 'top': 30, 'bottom': 1 } }
+          'tick': {'multiline': false}
+        }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 1}}
       };
 
       if (timeSeries.length - 1 > 13 && $scope.vis.params.fewXAxis) {
+        console.log('fewXAxis');
         config.axis = {
           'x': {
-            'label': { 'text': xLabel, 'position': 'outer-center' },
+            'label': {'text': xLabel, 'position': 'outer-center'},
             'type': 'category',
-            'tick': { 'fit': false, 'multiline': false, 'culling': { 'max': 10 }, 'format': $scope.vis.params.time_format }
-          }, 'y': { 'min': globalMin, 'padding': { 'top': 30, 'bottom': 1 } }
+            'tick': {
+              'fit': false,
+              'multiline': false,
+              'culling': {'max': 10},
+              'format': $scope.vis.params.time_format
+            }
+          }, 'y': {'min': globalMin, 'padding': {'top': 30, 'bottom': 1}}
         };
       }
     }
@@ -228,28 +217,35 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
     }
 
     if ($scope.vis.params.gridlines) {
-      config.grid = { 'x': { 'show': true }, 'y': { 'show': true } };
+      config.grid = {'x': {'show': true}, 'y': {'show': true}};
     }
 
     // zoom and hide points features
-    config.point = { 'show': !$scope.vis.params.hidePoints };
-    config.zoom = { 'enabled': $scope.vis.params.enableZoom };
+    config.point = {'show': !$scope.vis.params.hidePoints};
+    config.zoom = {'enabled': $scope.vis.params.enableZoom};
 
     // Generate and draw
+    console.log('C3 config', config);
     $scope.chart = c3.generate(config);
 
     // resize
-    const elem =  angular.element(idChart[0]).closest('div.visualize-chart');
+    const elem = angular.element(idChart[0]).closest('div.visualize-chart');
     const h = elem.height();
     const w = elem.width();
-    $scope.chart.resize({ height: h - 50, width: w - 50 });
+    $scope.chart.resize({height: h - 50, width: w - 50});
   };
 
   // Get data from ES
   $scope.processTableGroups = (tableGroups) => {
+    if(!$scope.$root.charts_option || ($scope.$root.charts_option && $scope.$root.charts_option.length < 1)){
+      $scope.$root.charts_option = $scope.vis.params.charts_option;
+    }
+    let chart_opt = [];
     if (tableGroups && tableGroups.tables) {
       _.each(tableGroups.tables, (table) => {
+        console.log('table', table);
         _.each(table.columns, (column, index) => {
+          console.log('column', column);
           const data = table.rows;
           const tmp = [];
           _.each(data, (val) => {
@@ -257,19 +253,36 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
               tmp.push(val[index]);
             }
           });
-          if (index > 0) {
-            $rootScope.label_keys.push(column.title);
+          if (column.aggConfig.__schema.group === 'metrics' ) {
+            chart_opt.push(gen_chart_opt(column.aggConfig.id, column.title, $scope.vis.params.chart_type, $scope.vis.params.chart_color));
             chartLabels[column.title] = column.title;
             tmp.splice(0, 0, column.title);
             parsedData.push(tmp);
-          } else {
+          } else if(column.aggConfig.__schema.title === 'X-Axis'){
+            isTimeSeries = column.aggConfig.__type.name === 'date_histogram' || column.aggConfig.__type.name === 'date_range';
             xLabel = column.title;
             xAxisValues.push(tmp);
           }
         });
       });
+      console.log('parsedData',parsedData);
     }
     $rootScope.editorParams.label = chartLabels;
+    if (!$rootScope.charts_option) {
+      $rootScope.charts_option = chart_opt;
+    } else {
+      let tmp = $rootScope.charts_option;
+      $rootScope.charts_option = chart_opt;
+
+      _.each($rootScope.charts_option, (newChart) => {
+        _.each(tmp, (chart) => {
+          if (newChart.id === chart.id) {
+            newChart.type = chart.type;
+            newChart.color = chart.color;
+          }
+        });
+      });
+    }
   };
 
 
@@ -285,7 +298,6 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
       timeSeries.length = 0;
       parsedData.length = 0;
       chartLabels = {};
-      $rootScope.label_keys = [];
       $scope.processTableGroups(resp);
 
       if (!xAxisValues[0]) {
@@ -313,7 +325,7 @@ module.controller('kbnVisMultipleGraphController', ($scope, $element, $rootScope
       if (idChart.length > 0 && h > 0 && w > 0) {
 
         if (hold !== h || wold !== w) {
-          $scope.chart.resize({ height: h - 50, width: w - 50 });
+          $scope.chart.resize({height: h - 50, width: w - 50});
           hold = elem.height();
           wold = elem.width();
         }
