@@ -1,7 +1,7 @@
 <div>
     <div class="kuiSideBarSection kuiSideBarSection__main">
         <div class="kuiSideBarSectionTitle">
-            <div class="kuiSideBarSectionTitle__text"> Metrics </div>
+            <div class="kuiSideBarSectionTitle__text"> Metrics</div>
         </div>
         <div ng-repeat="chart in $root.charts_option" class="kuiSideBarSection">
             <div class="kuiSideBarCollapsibleTitle">
@@ -52,71 +52,98 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="kuiSideBarSection kuiSideBarSection__main">
         <form>
-            <h4>Chart Time display </h4>
-
-            <div>
-                <label for="sel-time"> Time format</label>
-                <select class="form-control" id="sel-time" ng-model="vis.params.time_format">
-                    <option value="%d-%m-%Y">day - month - Years</option>
-                    <option value="%Y-%m">Years - month</option>
-                    <option value="%M">Month</option>
-                    <option value="%Y">Years</option>
-                    <option value="%H:%M">Hours Min</option>
-                </select>
+            <div class="kuiSideBarSectionTitle">
+                <div class="kuiSideBarSectionTitle__text">Chart Time display </div>
             </div>
-        </form>
-    </div>
-
-    <div class="form-group">
-
-        <form>
-            <h4>Others</h4>
-            <div clas="show-if-chart" ng-show="$root.show_chart">
-
-                <div class="form-group" ng-show="shouldShowHidePoint()">
-                    <label> Hide Points </label>
-                    <input type="checkbox" ng-model="vis.params.hidePoints"> (For line and spline charts)
-                </div>
-
-                <div class="form-group">
-                    <label> Enable zoom </label>
-                    <input type="checkbox" ng-model="vis.params.enableZoom">
-                </div>
-
-                <div class="form-group">
-                    <label> Show grid lines </label>
-                    <input type="checkbox" ng-model="vis.params.gridlines">
-                </div>
-
-                <div class="form-group" ng-show="shouldShowGrouped()">
-                    <!-- ng-show="$root.activate_grouped" -->
-                    <label> Stacked Bar Mode </label>
-                    <input type="checkbox" ng-model="vis.params.grouped"> (Needs at least 2 bar charts)
-                </div>
-
-                <div class="form-group">
-                    <label> Activate Data Labels </label>
-                    <input type="checkbox" ng-model="vis.params.dataLabels">
-                </div>
-
-                <div class="form-group">
-                    <label> Show just a few x-axis tick values </label>
-                    <input type="checkbox" ng-model="vis.params.fewXAxis">
-                </div>
-
-                <div class="form-group">
-                    <label for="sel-legend">Choose legend position</label>
-                    <select class="form-control" id="sel-legend" ng-model="vis.params.legend_position">
-                        <option value="right">Right</option>
-                        <option value="bottom">Bottom</option>
+            <div class="kuiSideBarSection">
+                <div class="kuiSideBarFormRow">
+                    <label for="sel-time" class="kuiSideBarFormRow__label"> Time format</label>
+                    <select class="kuiSelect kuiSideBarSelect ng-pristine ng-untouched ng-valid ng-not-empty" id="sel-time" ng-model="vis.params.time_format">
+                        <option value="%Y-%m-%d">day - month - Years</option>
+                        <option value="%Y-%m">Years - month</option>
+                        <option value="%M">Month</option>
+                        <option value="%Y">Years</option>
+                        <option value="%H:%M">Hours Min</option>
                     </select>
                 </div>
             </div>
         </form>
     </div>
 
+    <div class="kuiSideBarSection kuiSideBarSection__main">
+
+        <form>
+            <div class="kuiSideBarSectionTitle">
+                <div class="kuiSideBarSectionTitle__text"> Others</div>
+            </div>
+
+            <div class="kuiSideBarSection" ng-show="$root.show_chart">
+
+                <div class="kuiSideBarFormRow" ng-show="shouldShowHidePoint()">
+                    <label class="kuiSideBarFormRow__label" for="hidePoint"> Hide Points </label>
+                    <div class="kuiSideBarFormRow__control">
+                        <input class="kuiCheckBox ng-pristine ng-untouched ng-valid ng-not-empty" id="hidePoint"
+                               type="checkbox" ng-model="vis.params.hidePoints">
+                    </div>
+                </div>
+
+                <div class="kuiSideBarFormRow">
+                    <label class="kuiSideBarFormRow__label" for="enableZoom"> Enable zoom </label>
+                    <div class="kuiSideBarFormRow__control">
+                        <input class="kuiCheckBox ng-pristine ng-untouched ng-valid ng-not-empty" id="enableZoom"
+                               type="checkbox" ng-model="vis.params.enableZoom">
+                    </div>
+                </div>
+
+                <div class="kuiSideBarFormRow">
+                    <label class="kuiSideBarFormRow__label" for="showGrid"> Show grid lines </label>
+                    <div class="kuiSideBarFormRow__control">
+                        <input class="kuiCheckBox ng-pristine ng-untouched ng-valid ng-not-empty" id="showGrid"
+                               type="checkbox" ng-model="vis.params.gridlines">
+                    </div>
+                </div>
+
+                <div class="kuiSideBarFormRow" ng-show="shouldShowGrouped()">
+                    <!-- ng-show="$root.activate_grouped" -->
+                    <label class="kuiSideBarFormRow__label" for="stackBar"> Stacked Bar Mode </label>
+                    <div class="kuiSideBarFormRow__control">
+                        <input class="kuiCheckBox ng-pristine ng-untouched ng-valid ng-not-empty" id="stackBar"
+                               type="checkbox" ng-model="vis.params.grouped">
+                    </div>
+                </div>
+
+                <div class="kuiSideBarFormRow">
+                    <label class="kuiSideBarFormRow__label" for="activeLabels"> Activate Data Labels </label>
+                    <div class="kuiSideBarFormRow__control">
+                        <input class="kuiCheckBox ng-pristine ng-untouched ng-valid ng-not-empty" id="activeLabels"
+                               type="checkbox" ng-model="vis.params.dataLabels">
+                    </div>
+                </div>
+
+                <div class="kuiSideBarFormRow">
+                    <label class="kuiSideBarFormRow__label" for="fewXAxis"> Show just a few x-axis tick values </label>
+                    <div class="kuiSideBarFormRow__control">
+                        <input class="kuiCheckBox ng-pristine ng-untouched ng-valid ng-not-empty" id="fewXAxis"
+                               type="checkbox" ng-model="vis.params.fewXAxis">
+                    </div>
+                </div>
+
+                <div class="kuiSideBarFormRow">
+                    <label class="kuiSideBarFormRow__label" for="sel-legend">Choose legend position</label>
+                    <div class="kuiSideBarFormRow__control">
+                        <select class="kuiSelect kuiSideBarSelect ng-pristine ng-untouched ng-valid ng-not-empty"
+                                id="sel-legend" ng-model="vis.params.legend_position">
+                            <option value="right">Right</option>
+                            <option value="bottom">Bottom</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 

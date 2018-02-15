@@ -10,13 +10,17 @@ uiModules.get('kibana/kbn_vis_multiple_graph')
       template: tableVisParamsTemplate,
       link: ($scope) => {
 
+        // we use the root scope to communicate between the option and the graph panel
+        // the root scope is not saved so we use the scope vis param how can be restored
         if (!$scope.$root.charts_option || ($scope.$root.charts_option && $scope.$root.charts_option.length < 1)) {
           $scope.$root.charts_option = $scope.vis.params.charts_option;
         }
 
+        // to notify the apply change that the option have change we update the vis param (why see the last comment )
         $scope.setHasChange = () => {
           $scope.vis.params.charts_option = $scope.$root.charts_option;
         };
+
 
         $scope.shouldShowHidePoint = () => {
           const lineChartLabel = 'line';
@@ -31,10 +35,10 @@ uiModules.get('kibana/kbn_vis_multiple_graph')
 
         };
 
+        // grope option is only available with bar chart and with more than 2
         $scope.shouldShowGrouped = () => {
           let result = 0;
           _.each($scope.$root.charts_option, (option) => {
-
             if (option.type === 'bar') {
               result++;
             }

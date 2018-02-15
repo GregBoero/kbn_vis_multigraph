@@ -50,7 +50,7 @@ function TableVisTypeProvider(Private) {
         gridlines: false,
         few_x_axis: false,
         legend_position: 'right',
-        time_format: '%d-%m-%Y',
+        time_format: '%Y-%m-%d',
         grouped: false
       },
       template: tableVisTemplate,
@@ -75,6 +75,22 @@ function TableVisTypeProvider(Private) {
           min: 1,
           max: 1,
           aggFilter: ['!geohash_grid']
+        },
+        {
+          group: 'buckets',
+          name: 'group',
+          title: 'Split Series',
+          min: 0,
+          max: 1,
+          aggFilter: ['!geohash_grid', '!filter']
+        },
+        {
+          group: 'buckets',
+          name: 'split',
+          title: 'Split Chart',
+          min: 0,
+          max: 1,
+          aggFilter: ['!geohash_grid', '!filter']
         }
       ])
     },
